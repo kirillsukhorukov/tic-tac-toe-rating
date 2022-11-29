@@ -41,31 +41,88 @@ bool incorrect (std::string str1, std::string str2, std::string str3)
 
 }
 
+// Функция поиска символа по координатам
+char find_char (std::string str1, std::string str2, std::string str3, int x, int y)
+{
+    if (y == 0) return str3[x];
+    else if (y == 1) return str2[x];
+    else if (y == 2) return str1[x];
+    else return '-';
+}
+// Функция получения столбца
+std::string column (std::string str1, std::string str2, std::string str3, int y)
+{
+    std::string col;
+    col += str1[y];
+    col += str2[y];
+    col += str3[y];
+    return col;
+}
+
+// Функция нахождения победителя в строке
+bool  find_won (std::string str, char symbol)
+{
+    if (str[0] == symbol && str[1] == str[0] && str[2] == str[0]) return true;
+    else return false;
+}
+
 int main()
 {
-    while (true)
+    std::cout << "------------Tic-tac-toe------------\n" << std::endl;
+
+    // Ввод результатов игры
+    std::string str1, str2, str3;
+    std::cout << "Enter the result of the game of tic-tac-toe." << std::endl;
+    std::cout << "The result is entered in three lines containing 3 characters each." << std::endl;
+    std::cout << "The characters 'X', 'O' or '.' must be used for input." << std::endl;
+    std::cin >> str1 >> str2 >> str3;
+
+
+    // Проверка на корректность ввода результата игры
+    if (incorrect(str1,str2,str3)) std::cout << "Incorrect" << std::endl;
+    else
     {
-        // Ввод результатов игры
-        std::string str1, str2, str3;
-        std::cout << "Enter the result of the game of tic-tac-toe." << std::endl;
-        std::cout << "The result is entered in three lines containing 3 characters each." << std::endl;
-        std::cout << "The characters 'X', 'O' or '.' must be used for input." << std::endl;
-        std::cin >> str1 >> str2 >> str3;
 
-        // Выход из программы
-        if (str1 == "exit" || str2 == "exit" || str3 == "exit")
+        // Находим количество Х и О
+        int amountX = char_count(str1,str2,str3,'X');
+        int amountO = char_count(str1,str2,str3,'O');
+
+        // Выделяем строки-столбцы
+        std::string col1 = column(str1,str2,str3,0);
+        std::string col2 = column(str1,str2,str3,1);
+        std::string col3 = column(str1,str2,str3,2);
+
+        // Выделяем строки-диагонали
+        std::string diag1, diag2;
+        for (int i; i<3; i++)
         {
-            std::cout << "Program stopped!" << std::endl;
-            break;
+            diag1 += find_char (str1,str2,str3,i,i);
+            diag2 += find_char (str1,str2,str3,i,2-i);
         }
+        //    std::cout << "Strings:" << std::endl;
+        //    std::cout << str1 << std::endl << str2 << std::endl << str3 << std::endl;
+        //    std::cout << "Columns" << std::endl;
+        //    std::cout << col1 << std::endl << col2 << std::endl << col3 << std::endl;
+        //    std::cout << "Diagonals:" << std::endl;
+        //    std::cout << diag1 << std::endl << diag2 << std::endl;
+        //    std::cout << "X: " << amountX << " O: " << amountO << std::endl;
 
-        // Проверка на корректность ввода результата игры
-        if (incorrect(str1,str2,str3)) std::cout << "Incorrect" << std::endl;
-        else
+        // Проверка на выигрыш Пети
+        if (find_won(str1, 'X') || find_won(str2, 'X') || find_won(str3, 'X') ||
+                find_won(col1, 'X') ||find_won(col2, 'X') ||find_won(col3, 'X') ||
+                find_won(diag1, 'X') ||find_won(diag2, 'X'))
         {
-            std::cout << "Correct" << std::endl;
+            if (amountX-amountO == 1) std::cout << "Petya won" << std::endl;
+            else std::cout << "Incorrect" << std::endl;
         }
-
+        else if (find_won(str1, 'O') || find_won(str2, 'O') || find_won(str3, 'O') ||
+                 find_won(col1, 'O') ||find_won(col2, 'O') ||find_won(col3, 'O') ||
+                 find_won(diag1, 'O') ||find_won(diag2, 'O'))
+        {
+            if (amountO-amountX == 1) std::cout << "Vasya won" << std::endl;
+            else std::cout << "Incorrect" << std::endl;
+        }
+        else std::cout << "Nobody" << std::endl;
     }
 
     return 0;
